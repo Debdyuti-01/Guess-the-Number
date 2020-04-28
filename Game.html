@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+  <meta charset="utf-8">
+  <title>Guess the Number Game</title>
+  </head>
+  <body onload="init()" onbeforeunload="return yourFunction()">
+
+
+<form id="form">
+    <br><br><br>
+    <h2>Guess the Number <br><br></h2>
+
+    <input type="text" pattern="[1-9]{6}" id="input" autocomplete="off">
+    <ol id="guesses"></ol>
+
+    <div><span id="answer"></span>
+      <button type='button' id="showAnswer">Generate</button>
+      <button type='button' id="newGame">Replay Game</button></div>
+</form>
+
+
+<script>
+
+window.onbeforeunload = function(event) {
+    event.returnValue = "Reloading....";
+};
+
+
+
+
+
+Array.prototype.shuffle = function () {
+    var i = this.length,
+        j, temp;
+    if (i == 0) {
+        return this;
+    }
+    while (--i) {
+        j = Math.floor(Math.random() * (i + 1));
+        temp = this[i];
+        this[i] = this[j];
+        this[j] = temp;
+    }
+    return this;
+};
+(function (window) {
+    "use strict";
+    var number, timeStart, cnb,
+        L = 6,
+        NUMBERS = 9,
+        regex = /^[1-9]{6}$/,
+        //check if user submitted input is a valid number
+        validateInput = function (input) {
+            var number, i, l,
+                numbers = {};
+            if (!regex.test(input)) {
+                return false;
+            }
+            for (i = 0, l = input.length; i < l; i+= 1) {
+                if (numbers[input[i]]) {
+                    return false;
+                }
+                numbers[input[i]] = 1;
+            }
+            return true;
+        },
+        range = new Array(NUMBERS).join().split(',').map(function (e, i) {
+            return i + 1;
+        }),
+        generateNumber = function () {
+            return range.concat().shuffle().slice(0, L);
+        },
+        getNumber = function getNumber() {
+            return number.join('');
+        },
+        newGame = function () {
+            if (number) {
+                if (cnb && cnb.bulls === L) {
+                    alert('Time taken: ' + ((Date.now() - timeStart) / 1000) + ' seconds');
+                }
+            }
+            timeStart = Date.now();
+            number = generateNumber();
+            cnb = {};
+            window.showAnswer.style.display = 'inline';
+            window.answer.style.display = 'none';
+            window.answer.innerHTML = getNumber();
+            window.guesses.innerHTML = '';
+        },
+        calculateCnB = function (input) {
+            var num1 = 0,
+                num2 = 0,
+                arr = input.split('');
+            arr.forEach(function(n, i) {
+                var index = number.indexOf(+n);
+                if (index >= 0) {
+                    if (index === i) {
+                        num2 += 1;
+                    } else {
+                        num1 += 1;
+                    }
+                }
+            });
+            return {
+                num1: num1,
+                num2: num2
+            };
+        };
+
+    window.form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        if (validateInput(window.input.value)) {
+            cnb = calculateCnB(window.input.value);
+            window.guesses.innerHTML +=
+                cnb.num2 +cnb.num1 +
+                ' correct guesses ';
+
+            window.input.value = '';
+
+        }
+
+    }, false);
+    window.showAnswer.addEventListener('click', function (e) {
+        e.preventDefault();
+        window.answer.style.display = 'inline';
+        window.showAnswer.style.display = 'none';
+    }, false);
+    window.newGame.addEventListener('click', function (e) {
+        e.preventDefault();
+        newGame();
+    }, false);
+    newGame();
+}(this));
+
+</script>
+
+</body>
+</html>

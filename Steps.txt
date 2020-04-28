@@ -1,0 +1,6 @@
+Steps to be followed by the game:
+
+1. Guess the number and enter it in the textbox.
+2. Press the Enter key from keyboard. It will show the number of digits matched.
+3. Click generate button to see the actual computer guess.
+4. Can replay the game by clicking on replay game button.
